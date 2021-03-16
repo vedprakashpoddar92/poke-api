@@ -83,36 +83,62 @@ function fetchDetails() {
     console.log(pokeName, pokeId);
     
     let pokeDetailsAPI = `https://pokeapi.co/api/v2/pokemon/${pokeId}`
-    console.log(pokeDetailsAPI);
+    //console.log(pokeDetailsAPI);
 
     fetch(pokeDetailsAPI).then((response) =>{
         return response.json();
     }).then((data) => {
-        console.log(data);
-        let newsHTML = "";
-        data['stats'].forEach(function(element, index){
-           console.log(element); 
-           newsHTML += `<div class="accordion-item">
-                            <h2 class="accordion-header" id="heading${index}">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="false" aria-controls="collapse${index}">
-                                <span><strong>${pokeName} Start - ${index + 1}</strong></span>
-                            </button>
-                            </h2>
-                            <div id="collapse${index}" class="accordion-collapse collapse" aria-labelledby="heading${index}" data-bs-parent="#pokeDetails">
-                            <div class="accordion-body">
-                            <table class="table table-striped">
-                                <tbody>
-                                    <tr><th scope="row">1</th><td>Base Stat</td><td>${element["base_stat"]}</td></tr>
-                                    <tr><th scope="row">2</th><td>Effort</td><td>${element["effort"]}</td></tr>
-                                    <tr><th scope="row">3</th><td>stat Name</td><td>${element['stat']["name"]}</td></tr>
-                                    <tr><th scope="row">3</th><td>stat URL</td><td>${element['stat']["url"]}</td></tr>
-                                </tbody>
-                            </table>
-                            </div>
-                            </div>
-                        </div>`; 
-        });
-        pokeDetails.innerHTML = newsHTML;
+        console.log(data['sprites']);
+        const someDetails = {
+            'abilities' : data['abilities'],
+            'sprites'  : data['sprites'],
+            'types' : data['types'],
+            'moves' : data['moves']
+        }
+
+        let dummyObj = {};
+        dummyObj['icons'] = someDetails.sprites['back_shiny'];
+
+        someDetails.abilities.forEach(function(element){
+            
+            if(element['is_hidden'] === false){
+                dummyObj['abilityArr'] = [{'name': element['ability']['name'], 'url': element['ability']['url']}];
+                
+            }
+        })
+        
+        someDetails.types.forEach(function(element,index){
+                dummyObj['type'] = [{'typeName': element['type']['name'], 'url': element['type']['url']}];
+        })
+        someDetails.moves.forEach(function(element){
+            dummyObj['moves'] = [{'moveName': element['move']['name'], 'url': element['move']['url']}];
+        })
+        console.log(dummyObj);
+
+        let newsHTML = `<div class="card"><img class="card-img-top" src="${dummyObj.icons}" alt="${pokeName}"><div class="card-body"><h5 class="card-title">Poke ID - ${pokeId}, Poke Name - "${pokeName}"</h5><hr>`;
+
+        dummyObj.abilityArr.forEach(function(element){
+            newsHTML += `<ul class="list-group list-group-flush">
+            <h5>Ability:-</h5>
+            <li class="list-group-item">${element['name']}</li>
+            <li class="list-group-item">${element['url']}</li>
+            </ul><hr>`;
+        })
+        dummyObj.type.forEach(function(element){
+            newsHTML += `<ul class="list-group list-group-flush">
+            <h5>Types:-</h5>
+            <li class="list-group-item">${element['typeName']}</li>
+            <li class="list-group-item">${element['url']}</li>
+            </ul><hr>`;
+        })
+        dummyObj.moves.forEach(function(element){
+            newsHTML += `<ul class="list-group list-group-flush">
+            <h5>Moves:-</h5>
+            <li class="list-group-item">${element['moveName']}</li>
+            <li class="list-group-item">${element['url']}</li>
+            </ul></div></div>`;
+        })
+        document.getElementById('pokeDetails').innerHTML = newsHTML;
     }).catch((error) => {
         console.error('Error:', error);
     });

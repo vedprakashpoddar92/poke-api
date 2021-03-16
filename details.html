@@ -17,6 +17,13 @@
       .btn-info {
         float: right;
       }
+      .card-img-top{
+        height: 120px;
+        background: #f0eded;
+      }
+      .list-group-flush>.list-group-item{
+        border-width: 0 0 0px;
+      }
     </style>
   </head>
   <body onload="fetchDetails()">
@@ -39,8 +46,12 @@
       </div>
     </nav>
     <div class="container my-3">
-      <h3>Details</h3>
-      <div id="pokeDetails"></div>
+        <div class="row justify-content-md-center">
+          <div class="col col-lg-5">
+            <h3>Details</h3>
+            <div id="pokeDetails"></div>
+          </div> 
+        </div>
     </div>
     <div id="loadData">
     </div>
